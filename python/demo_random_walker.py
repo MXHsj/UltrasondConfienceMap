@@ -5,10 +5,11 @@ import numpy as np
 import nibabel as nib
 import pydicom
 from skimage import io
-from skimage.external.tifffile import imshow
+# from skimage.external.tifffile import imshow
 from skimage.transform import resize
 from matplotlib import pyplot as plt
 import time
+
 
 def random_walker2d(image_path, show_image=True, save_path='random_walker2d.png'):
     """random walker 2d demo, support gray image and rgb 3 channel image
@@ -23,10 +24,11 @@ def random_walker2d(image_path, show_image=True, save_path='random_walker2d.png'
     img = io.imread(image_path)
     labels = np.zeros_like(img)
     # set walker seeds
-    labels[0,:] = 1
-    labels[-1,:] = 2
+    labels[0, :] = 1
+    labels[-1, :] = 2
     now = time.time()
-    conf_map = random_walker(img, labels, beta=130, mode='cg_mg', return_full_prob=True)
+    conf_map = random_walker(img, labels, beta=130,
+                             mode='cg_mg', return_full_prob=True)
     print("Runtime", time.time() - now)
     if show_image:
         plt.figure('random walker 2d')
@@ -39,7 +41,7 @@ def random_walker2d(image_path, show_image=True, save_path='random_walker2d.png'
     return conf_map
 
 
-def random_walker3d(dcm_path, target_shape=(200, 200, 400), show_image=True, 
+def random_walker3d(dcm_path, target_shape=(200, 200, 400), show_image=True,
                     save_nii=False, save_path='random_walker3d.nii'):
     """random walker 3d demo
 
@@ -56,11 +58,12 @@ def random_walker3d(dcm_path, target_shape=(200, 200, 400), show_image=True,
     print('resize volume to ', target_shape)
     labels = np.zeros_like(volume)
     # set random walker seeds
-    labels[:, 0, :] = 2     
+    labels[:, 0, :] = 2
     labels[:, -1, :] = 1
     now = time.time()
-    conf_map = random_walker(volume, labels, beta=90, mode='cg_mg', return_full_prob=True)
-    conf_map = conf_map[1,:,:,:]
+    conf_map = random_walker(volume, labels, beta=90,
+                             mode='cg_mg', return_full_prob=True)
+    conf_map = conf_map[1, :, :, :]
     print("运行时间", time.time() - now)
     if show_image:
         fig = plt.figure('random walker 3d')
