@@ -62,8 +62,8 @@ function [probabilities] = confidenceEstimation(A, seeds, labels, beta, gamma)
     % Solve system
     if (number_labels == 2)
         x = D \ rhs(:, 1);
-        x(:, 2) = 1.0 - x(:, 1);
-%         x = [x, 1.0 - x(:, 1)]; % original code
+%         x(:, 2) = 1.0 - x(:, 1);  % original code
+        x = [x, 1.0 - x(:, 1)]; 
     else
         x = D \ rhs;
     end
