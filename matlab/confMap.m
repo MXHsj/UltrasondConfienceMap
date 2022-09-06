@@ -51,7 +51,7 @@ W = attenuationWeighting2(data);
 % Apply weighting directly to image
 % Same as applying it individually during the formation of the Laplacian
 data = data .* W;                       % calculate weighted sum
-% Find condidence values
+% Find confidence values
 map = confidenceEstimation( data, seeds, labels, beta, gamma);
 % Only keep probabilities for virtual source notes.
 map = map(:, :, 1);   % size is [n_rows, n_cols, 2]
