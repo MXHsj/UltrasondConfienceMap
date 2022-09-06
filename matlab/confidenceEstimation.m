@@ -28,17 +28,24 @@ function [probabilities] = confidenceEstimation(A, seeds, labels, beta, gamma)
     i_U(seeds) = 0;
     i_U = find(i_U); % Index of unmarked nodes
     B = B(i_U, :);
-
+    
+    % ========== modified for C code generation ==========
     % Remove marked nodes from Laplacian by deleting rows and cols
-    D(:, seeds) = [];
-    D(seeds, :) = [];
-
+%     D(:, seeds) = []; % original code
+%     D(seeds, :) = []; % original code
+    D = D(setdiff(1:size(D,1), sort(seeds)), setdiff(1:size(D,2), sort(seeds)));
+    % ====================================================
+    
     % Adjust labels
     label_adjust = min(labels);
     labels = labels - label_adjust + 1; % labels > 0
 
+    % ========== modified for C code generation ==========
     % Find number of labels (K)
-    labels_record(labels) = 1;
+%     labels_record(labels) = 1;  % original code
+    labels_record = ones(1, max(labels));
+    % ====================================================
+
     labels_present = find(labels_record);
     number_labels = length(labels_present); % number of labels
     % Define M matirx
@@ -50,24 +57,29 @@ function [probabilities] = confidenceEstimation(A, seeds, labels, beta, gamma)
 
     % Right-handside (-B^T*M)
     rhs = sparse(-B * M);
-
+    
+    % ========== modified for C code generation ==========
     % Solve system
     if (number_labels == 2)
         x = D \ rhs(:, 1);
         x(:, 2) = 1.0 - x(:, 1);
+%         x = [x, 1.0 - x(:, 1)]; % original code
     else
         x = D \ rhs;
     end
+    % ====================================================
 
     % Prepare output
     probabilities = zeros(N, number_labels);
-
+    % ========== modified for C code generation ==========
     for k = 1:number_labels
         % Probabilities for unmarked nodes
-        probabilities(i_U, k) = x(:, k);
+%         probabilities(i_U, k) = x(:, k);    % original code
+        probabilities(i_U, k) = full(x(:, k));
         % Max probability for marked node of each label
         probabilities(seeds(labels == k), k) = 1.0;
     end
+    % ====================================================
 
     % Final reshape with same size as input image (no padding)
     probabilities = reshape(probabilities, [size(A, 1) size(A, 2) number_labels]);
