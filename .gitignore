@@ -103,5 +103,7 @@ venv.bak/
 # mypy
 .mypy_cache/
 
-# MATLAB
+# generated data
 *.asv
+*.avi
+*.bag
